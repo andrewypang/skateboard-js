@@ -3,8 +3,11 @@ let videoProperties = {};
 let poseNet;
 let poses = [];
 let playing = false;
+let showingVideoOverlay = true;
+let showingPoseNetOverlay = true;
 let completion;
 let playbackTrack = {};
+let frameRate = 24;
 
 function setup() {
     let canvasWidth = 1080;
@@ -32,14 +35,27 @@ function setup() {
     video = createVideo(['skateboard-data-clips/wallride.mov'], videoCallback);
     video.hide(); // by default video shows up in separate dom element. hide it and draw it to the canvas instead
 
-    button = createButton('play');
-    button.mousePressed(toggleVid); // attach button listener
+    button_play = createButton('play');
+    button_play.mousePressed(toggleVideoPlayPause); // attach button listener
+
+    button_nextFrame = createButton('Next Frame');
+    button_nextFrame.mousePressed(nextFrame);
+
+    button_previousFrame = createButton('Previous Frame');
+    button_previousFrame.mousePressed(previousFrame);
+
+    button_toggleVideoOverlay = createButton('Toggle Video Overlay');
+    button_toggleVideoOverlay.mousePressed(toggleVideoOverlay);
+
+    button_togglePoseNet = createButton('Toggle PoseNet');
+    button_togglePoseNet.mousePressed(togglePoseNet);
+
 
 }
 
 // This function is called when the video loads and is ready
 function videoCallback() {
-    console.log("Successful video callback. Initialize PoseNet");
+    console.log("Successful video callback. Initializing PoseNet");
     video.volume(0); //set the volume to 0
     video.size(width, videoProperties.height); //set the video size relative to the canvas size
 
@@ -61,17 +77,36 @@ function modelLoaded() {
 }
 
 // plays or pauses the video depending on current state
-function toggleVid() {
+function toggleVideoPlayPause() {
     if (playing) {
         video.pause();
-        button.html('play');
+        button_play.html('play');
     } else {
         video.loop();
-        button.html('pause');
+        button_play.html('pause');
     }
     playing = !playing;
 }
 
+function toggleVideoOverlay() {
+    showingVideoOverlay = !showingVideoOverlay;
+}
+
+function togglePoseNet() {
+    showingPoseNetOverlay = !showingPoseNetOverlay;
+}
+
+function nextFrame() {
+    video.pause();
+    let currentTime = video.time();
+    video.time(currentTime + (1 / frameRate));
+}
+
+function previousFrame() {
+    video.pause();
+    let currentTime = video.time();
+    video.time(currentTime - (1 / frameRate));
+}
 
 function draw() {
     background(150);
@@ -86,17 +121,18 @@ function draw() {
     ellipse(completion * width, videoProperties.height + (playbackTrack.height / 2), 16, 16);
     pop();
 
-    // image(video, 0, 0, width, height);
-    image(video, 0, 0, width, videoProperties.height);
-
-    // check if pose is found aka exist
-    if (poses.length > 0) {
-
-
-        drawSkeleton(poses);
-        drawKeypoints(poses);
-
+    if (showingVideoOverlay) {
+        image(video, 0, 0, width, videoProperties.height);
     }
+
+    if (showingPoseNetOverlay) {
+        // check if pose is found aka exist
+        if (poses.length > 0) {
+            drawSkeleton(poses);
+            drawKeypoints(poses);
+        }
+    }
+
 }
 
 // The following comes from https://ml5js.org/docs/posenet-webcam
