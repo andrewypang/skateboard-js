@@ -1,27 +1,47 @@
 let video;
+let videoProperties = {};
 let poseNet;
 let poses = [];
 let playing = false;
+let completion;
+let playbackTrack = {};
 
 function setup() {
-    createCanvas(1080, 720);
+    let canvasWidth = 1080;
+
+    // set videoProperties with width and height to insure consistency and matches with PoseNet
+    videoProperties.width = canvasWidth;
+    videoProperties.height = 720;
+
+    // set playbackTrack width to the full width of the canvas and set height to anything that looks good
+    playbackTrack.width = canvasWidth;
+    playbackTrack.height = 96;
+
+    createCanvas(canvasWidth, (videoProperties.height + playbackTrack.height));
+    /*
+     *   |-------------------|
+     *   |                   |
+     *   |       VIDEO       |
+     *   |                   |
+     *   |-------------------|
+     *   |  PLAYBACK TRACK   |
+     *   |-------------------|
+     */
 
     // specify multiple formats for different browsers
-    video = createVideo(['skateboard-data-clips/wallride.mov', 'skateboard-data-clips/wallride.webm'], videoCallback);
+    video = createVideo(['skateboard-data-clips/wallride.mov'], videoCallback);
     video.hide(); // by default video shows up in separate dom element. hide it and draw it to the canvas instead
 
     button = createButton('play');
     button.mousePressed(toggleVid); // attach button listener
 
-
 }
 
-// This function is called when the video loads
+// This function is called when the video loads and is ready
 function videoCallback() {
-    // video.loop();
     console.log("Successful video callback. Initialize PoseNet");
-    video.volume(0);
-    video.size(width, height);
+    video.volume(0); //set the volume to 0
+    video.size(width, videoProperties.height); //set the video size relative to the canvas size
 
     // set some options
     let options = {
@@ -55,7 +75,19 @@ function toggleVid() {
 
 function draw() {
     background(150);
-    image(video, 0, 0, width, height);
+
+    //get elapsed time of video
+    completion = video.time() / video.duration();
+
+    push();
+    fill(255);
+    stroke(20);
+    strokeWeight(4);
+    ellipse(completion * width, videoProperties.height + (playbackTrack.height / 2), 16, 16);
+    pop();
+
+    // image(video, 0, 0, width, height);
+    image(video, 0, 0, width, videoProperties.height);
 
     // check if pose is found aka exist
     if (poses.length > 0) {
@@ -79,10 +111,12 @@ function drawKeypoints() {
             let keypoint = pose.keypoints[j];
             // Only draw an ellipse is the pose probability is bigger than 0.2
             if (keypoint.score > 0.2) {
+                push();
                 fill(255);
                 stroke(20);
                 strokeWeight(4);
                 ellipse(round(keypoint.position.x), round(keypoint.position.y), 8, 8);
+                pop();
             }
         }
     }
