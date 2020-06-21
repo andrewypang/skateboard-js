@@ -38,18 +38,20 @@ function setup() {
     button_play = createButton('play');
     button_play.mousePressed(toggleVideoPlayPause); // attach button listener
 
-    button_nextFrame = createButton('Next Frame');
-    button_nextFrame.mousePressed(nextFrame);
-
-    button_previousFrame = createButton('Previous Frame');
-    button_previousFrame.mousePressed(previousFrame);
-
     button_toggleVideoOverlay = createButton('Toggle Video Overlay');
     button_toggleVideoOverlay.mousePressed(toggleVideoOverlay);
 
     button_togglePoseNet = createButton('Toggle PoseNet');
     button_togglePoseNet.mousePressed(togglePoseNet);
 
+    button_previousFrame = createButton('Previous Frame');
+    button_previousFrame.mousePressed(previousFrame);
+
+    button_nextFrame = createButton('Next Frame');
+    button_nextFrame.mousePressed(nextFrame);
+
+    button_saveFrame = createButton('Save Frame');
+    button_saveFrame.mousePressed(saveFrame);
 
 }
 
@@ -106,6 +108,10 @@ function previousFrame() {
     video.pause();
     let currentTime = video.time();
     video.time(currentTime - (1 / frameRate));
+}
+
+function saveFrame() {
+    saveCanvas('myCanvas', 'jpg');
 }
 
 function draw() {
