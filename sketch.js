@@ -124,23 +124,21 @@ function saveFrame() {
 function exportVideo() {
     console.log("exporting video!");
 
-    // cStream = video.captureStream();
+
     let cStream = document.querySelector('canvas').captureStream();
     mediaRecorder = new MediaRecorder(cStream);
     mediaRecorder.start();
     mediaRecorder.ondataavailable = function (e) {
         recordedBlobs.push(e.data);
     }
-    mediaRecorder.onstop = stopRecording;
-
-
+    mediaRecorder.onstop = downloadVideo;
 
 }
 
-function stopRecording() {
+function downloadVideo() {
     console.log("data available after MediaRecorder.stop() called.");
     // Below is download link
-    mediaRecorder.stop();
+
     let url;
     const blob = new Blob(recordedBlobs);
     url = window.URL.createObjectURL(blob, {
@@ -154,6 +152,10 @@ function stopRecording() {
     a.download = "neha.webm";
     a.click();
     window.URL.revokeObjectURL(url);
+}
+
+function stopRecording() {
+    mediaRecorder.stop();
 }
 
 function draw() {
