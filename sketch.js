@@ -8,6 +8,7 @@ let showingPoseNetOverlay = true;
 let completion;
 let playbackTrack = {};
 let frameRate = 24;
+let recordedBlobs = [];
 
 function setup() {
     let canvasWidth = 1080;
@@ -52,6 +53,12 @@ function setup() {
 
     button_saveFrame = createButton('Save Frame');
     button_saveFrame.mousePressed(saveFrame);
+
+    button_exportVideo = createButton('Export Frame');
+    button_exportVideo.mousePressed(exportVideo);
+
+    button_stopRecording = createButton('Stop Recording');
+    button_stopRecording.mousePressed(stopRecording);
 
 }
 
@@ -112,6 +119,41 @@ function previousFrame() {
 
 function saveFrame() {
     saveCanvas('myCanvas', 'jpg');
+}
+
+function exportVideo() {
+    console.log("exporting video!");
+
+    // cStream = video.captureStream();
+    let cStream = document.querySelector('canvas').captureStream();
+    mediaRecorder = new MediaRecorder(cStream);
+    mediaRecorder.start();
+    mediaRecorder.ondataavailable = function (e) {
+        recordedBlobs.push(e.data);
+    }
+    mediaRecorder.onstop = stopRecording;
+
+
+
+}
+
+function stopRecording() {
+    console.log("data available after MediaRecorder.stop() called.");
+    // Below is download link
+    mediaRecorder.stop();
+    let url;
+    const blob = new Blob(recordedBlobs);
+    url = window.URL.createObjectURL(blob, {
+        type: 'video/webm'
+    });
+
+    var a = document.createElement("a");
+    document.body.appendChild(a);
+    a.style = "display: none";
+    a.href = url;
+    a.download = "neha.webm";
+    a.click();
+    window.URL.revokeObjectURL(url);
 }
 
 function draw() {
