@@ -149,7 +149,7 @@ function downloadVideo() {
     document.body.appendChild(a);
     a.style = "display: none";
     a.href = url;
-    a.download = "neha.webm";
+    a.download = "skate-clip.webm";
     a.click();
     window.URL.revokeObjectURL(url);
 }
