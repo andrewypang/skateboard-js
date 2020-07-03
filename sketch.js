@@ -33,7 +33,7 @@ function setup() {
      */
 
     // specify multiple formats for different browsers
-    video = createVideo(['skateboard-data-clips/wallride.mov'], videoCallback);
+    video = createVideo(['skateboard-data-clips/fs-ramp.mov'], videoCallback);
     video.hide(); // by default video shows up in separate dom element. hide it and draw it to the canvas instead
 
     button_play = createButton('play');
@@ -124,15 +124,25 @@ function saveFrame() {
 function exportVideo() {
     console.log("exporting video!");
 
+    //go to the beginning of video
+    video.time(0);
+    video.elt.loop = false;
+    console.log(video.elt.loop);
+    video.onended(sayDone);
+    video.play();
 
-    let cStream = document.querySelector('canvas').captureStream();
-    mediaRecorder = new MediaRecorder(cStream);
-    mediaRecorder.start();
-    mediaRecorder.ondataavailable = function (e) {
-        recordedBlobs.push(e.data);
-    }
-    mediaRecorder.onstop = downloadVideo;
+    // let cStream = document.querySelector('canvas').captureStream();
+    // mediaRecorder = new MediaRecorder(cStream);
+    // mediaRecorder.start();
+    // mediaRecorder.ondataavailable = function (e) {
+    //     recordedBlobs.push(e.data);
+    // }
+    // mediaRecorder.onstop = downloadVideo;
 
+}
+
+function sayDone() {
+    alert('done playing');
 }
 
 function downloadVideo() {
