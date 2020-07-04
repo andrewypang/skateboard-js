@@ -127,11 +127,11 @@ function exportVideo() {
     //go to the beginning of video
     video.time(0);
     video.elt.loop = false;
-    console.log(video.elt.loop);
+
+
+
     // video.onended(stopRecording);
     video.elt.onended = (event) => {
-        console.log('Video stopped either because 1) it was over, ' +
-            'or 2) no further data is available.');
         mediaRecorder.requestData(); //ensure getting the last bit of the Blob
         stopRecording();
     };
@@ -155,7 +155,6 @@ function exportVideo() {
 }
 
 function downloadVideo() {
-    console.log("data available after MediaRecorder.stop() called.");
     // Below is download link
 
     let url;
@@ -164,12 +163,18 @@ function downloadVideo() {
         type: 'video/webm'
     });
 
+    // Get file name from video src(returns FULL path, ie: C://)
+    let fileName = (video.src).split("/").pop(); // take full path of video and extract filename(with extension)
+    fileName = fileName.split('.').slice(0, -1).join('.'); //take filename and remove extension
+
+
+    // Creates a download link to download the video file
     var a = document.createElement("a");
     document.body.appendChild(a);
     a.style = "display: none";
     a.href = url;
-    a.download = "skate-clip.webm";
-    a.click();
+    a.download = fileName + "-clip" + ".webm";
+    a.click(); //Clicking the link to start downloading the file
     window.URL.revokeObjectURL(url);
 }
 
