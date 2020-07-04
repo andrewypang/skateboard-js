@@ -128,21 +128,30 @@ function exportVideo() {
     video.time(0);
     video.elt.loop = false;
     console.log(video.elt.loop);
-    video.onended(sayDone);
+    // video.onended(stopRecording);
+    video.elt.onended = (event) => {
+        console.log('Video stopped either because 1) it was over, ' +
+            'or 2) no further data is available.');
+        mediaRecorder.requestData(); //ensure getting the last bit of the Blob
+        stopRecording();
+    };
+
+    // declare options for mediaRecorder
+    var mediaRecorderOptions = {
+        videoBitsPerSecond: 2500000,
+        mimeType: 'video/webm'
+    }
+
+    let cStream = document.querySelector('canvas').captureStream();
+    mediaRecorder = new MediaRecorder(cStream, mediaRecorderOptions);
+    mediaRecorder.start();
+    mediaRecorder.ondataavailable = function (e) {
+        recordedBlobs.push(e.data);
+    }
+    mediaRecorder.onstop = downloadVideo;
+
     video.play();
 
-    // let cStream = document.querySelector('canvas').captureStream();
-    // mediaRecorder = new MediaRecorder(cStream);
-    // mediaRecorder.start();
-    // mediaRecorder.ondataavailable = function (e) {
-    //     recordedBlobs.push(e.data);
-    // }
-    // mediaRecorder.onstop = downloadVideo;
-
-}
-
-function sayDone() {
-    alert('done playing');
 }
 
 function downloadVideo() {
