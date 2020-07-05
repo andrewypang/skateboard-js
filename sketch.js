@@ -9,10 +9,10 @@ let completion;
 let playbackTrack = {};
 let frameRate = 24;
 let recordedBlobs = [];
-let videoSkateClip = ['skateboard-data-clips/personal/fs-shuv.mov'];
+let videoSkateClip = ['skateboard-data-clips/Chris+Joslin+Backside+360+Kickflip+Rincon+-+UNCUT.mp4'];
 
 function setup() {
-    let canvasWidth = 1080;
+    let canvasWidth = 1280;
 
     // set videoProperties with width and height to insure consistency and matches with PoseNet
     videoProperties.width = canvasWidth;
@@ -69,7 +69,7 @@ function videoCallback() {
     // set some options
     let options = {
         imageScaleFactor: 1,
-        minConfidence: 0.1
+        minConfidence: 0.3
     }
 
     // Create a new poseNet method
@@ -116,7 +116,10 @@ function previousFrame() {
 }
 
 function saveFrame() {
-    saveCanvas('myCanvas', 'jpg');
+    let fileName = (video.src).split("/").pop(); // take full path of video and extract filename(with extension)
+    fileName = fileName.split('.').slice(0, -1).join('.'); //take filename and remove extension
+
+    saveCanvas(fileName + '--single-frame', 'jpg');
 }
 
 function exportVideo() {
