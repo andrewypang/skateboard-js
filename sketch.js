@@ -9,6 +9,7 @@ let completion;
 let playbackTrack = {};
 let frameRate = 24;
 let recordedBlobs = [];
+let videoSkateClip = ['skateboard-data-clips/personal/fs-shuv.mov'];
 
 function setup() {
     let canvasWidth = 1080;
@@ -33,7 +34,7 @@ function setup() {
      */
 
     // specify multiple formats for different browsers
-    video = createVideo(['skateboard-data-clips/fs-ramp.mov'], videoCallback);
+    video = createVideo(videoSkateClip, videoCallback);
     video.hide(); // by default video shows up in separate dom element. hide it and draw it to the canvas instead
 
     button_play = createButton('play');
@@ -51,14 +52,11 @@ function setup() {
     button_nextFrame = createButton('Next Frame');
     button_nextFrame.mousePressed(nextFrame);
 
-    button_saveFrame = createButton('Save Frame');
+    button_saveFrame = createButton('Save Single Frame');
     button_saveFrame.mousePressed(saveFrame);
 
-    button_exportVideo = createButton('Export Frame');
+    button_exportVideo = createButton('Export Video');
     button_exportVideo.mousePressed(exportVideo);
-
-    button_stopRecording = createButton('Stop Recording');
-    button_stopRecording.mousePressed(stopRecording);
 
 }
 
