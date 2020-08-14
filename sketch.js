@@ -9,7 +9,7 @@ let completion;
 let playbackTrack = {};
 let frameRate = 24;
 let recordedBlobs = [];
-let videoSkateClip = ['skateboard-data-clips/Chris+Joslin+Backside+360+Kickflip+Rincon+-+UNCUT.mp4'];
+let videoSkateClip = ['skateboard-data-clips/pro-clips/deedz/deedz--2.mov'];
 
 function setup() {
     let canvasWidth = 1280;
@@ -221,7 +221,7 @@ function drawKeypoints() {
             // A keypoint is an object describing a body part (like rightArm or leftShoulder)
             let keypoint = pose.keypoints[j];
             // Only draw an ellipse is the pose probability is bigger than 0.2
-            if (keypoint.score > 0.2) {
+            if (keypoint.score > 0.4) {
                 push();
                 fill(255);
                 stroke(20);
